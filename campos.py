@@ -1,3 +1,6 @@
+from heapdict import heapdict
+import math
+
 # http://telecom.inesctec.pt/~rcampos/a-fast-algorithm-for-computing-min-routing-cost-sp.pdf
 def campo_mcrt(graph):
     """
@@ -23,14 +26,14 @@ def campo_mcrt(graph):
                 s[v] += w
                 m[u] = max(m[u], w)
                 m[v] = max(m[v], w)
-                sumWeights += weight
+                sumWeights += w
     mean = sumWeights/len(edgeSet)
     tempSum = 0
     for u, v, w in edgeSet:
         tempSum += (w - mean)**2
     stdDev = math.sqrt(tempSum/(len(edgeSet) - 1))
     ratio = stdDev / mean
-    threshold = 0.4 + 0.005 * (n - 10)
+    threshold = 0.4 + 0.005 * (N - 10)
     if ratio < threshold:
         c4 = 1
         c5 = 1
@@ -61,6 +64,28 @@ def campo_mcrt(graph):
     p[f] = f
     pd[f] = 0
     ps[f] = 1
-    L = [f]
+    L = heapdict.heapdict()
+    L[f] = (0, 0)
     spanned_vertices = 0
+    # TODO INIT
+    wd = [0] * N
+    jsp = [0] * N
     while spanned_vertices < N:
+        u, _ = L.popitem()
+        for v, weight in graph[u]:
+            if colors[v] == -1:
+                continue
+            wd_t = c4 * weight + c5 * (cf[u] + weight)
+            jsp_t = (d[v] + d[u]) + (d[v] + d[u])/(s[v] + s[u])
+            if (wd[v], jsp[v]) < (wd_t, jsp_t):
+                if colors[v] == 1:
+                    wd[v] = wd_t
+                    jsp[v] = jsp_t
+                    p[v] = u
+                    L[v] = (wd[v], jsp[v])
+                elif colors[v] == 0:
+                    # TODO ??
+                    L[v] = (wd[v], jsp[v])
+        colors[u] = -1
+        spanned_vertices += 1
+    return p
