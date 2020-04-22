@@ -67,7 +67,7 @@ def get_component(G, start):
                 stack.append(v)
     return nodes
 
-@njit
+#@njit
 def cost_fn(G):
     # https://www.geeksforgeeks.org/calculate-number-nodes-subtrees-using-dfs/
     # TODO TEST!
@@ -90,4 +90,5 @@ def cost_fn(G):
             min_count = min(counts[v], counts[u])
             # Don't multiply by 2 since each edge is counted twice anyways
             cost += min_count * (G.shape[0] - min_count) * G[u][v]
+            print(min_count, G.shape[0], G[u][v], cost)
     return cost

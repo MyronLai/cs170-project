@@ -74,3 +74,29 @@ def test_mutate():
 def test_anneal():
     G = g
     result, score = annealing.anneal(G, annealing.initial_fn, annealing.energy_fn, annealing.make_mutate_fn(0.3, 0.5), 120000, 0.0004)
+
+def test_cost():
+    G = np.zeros((2, 2))
+    print(f"No edges, should be 0: {utils.cost_fn(G)}")
+    G[0][1] = 5
+    G[1][0] = 5
+    print(f"(0)--5--(1), should be 10: {utils.cost_fn(G)}")
+    G = np.zeros((5, 5))
+    G[0][1] = 3
+    G[1][0] = 3
+    G[1][2] = 2
+    G[2][1] = 2
+    G[2][3] = 5
+    G[3][2] = 5
+    G[2][4] = 4
+    G[4][2] = 4
+    print(f"5 nodes, 4 edges, should be 120: {utils.cost_fn(G)}")
+    for _ in range(5):
+        N = np.random.randint(2,10)
+        G = np.zeros((N,N))
+        for x in range(N):
+            for y in range(N):
+                G[x][y] = abs(x-y)
+        print(G)
+        print(f"Size {N} line graph, should be {(N+1)/3}: {utils.cost_fn(G)}")
+
