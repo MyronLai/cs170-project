@@ -142,7 +142,7 @@ def make_mutate_fn(p_switch, p_prune):
         return new_state
     return mutate_fn
 
-def anneal(G, initial_fn, energy_fn, mutate_fn, iters):
+def anneal(G, initial_fn, energy_fn, mutate_fn, iters, scale):
     s = initial_fn(G)
     e = energy_fn(s, G)
     min_s, e_min = s, e
@@ -150,7 +150,7 @@ def anneal(G, initial_fn, energy_fn, mutate_fn, iters):
         temp = (k + 1) / iters
         s_new = mutate_fn(s, G)
         e_new = energy_fn(s_new, G)
-        if e_new < e or math.exp(-(e_new - e)*temp) < random.random():
+        if e_new < e or random.random() < math.exp(-(e_new - e)*temp*scale):
             s = s_new
             e = e_new
             print(e)
