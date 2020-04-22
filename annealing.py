@@ -1,5 +1,9 @@
 import math, random
-import optimize
+import utils
+from numba import njit
+from numba.core import types
+from numba.typed import Dict
+import numpy as np
 
 def initial_fn(G):
     # Generate random spanning tree
@@ -26,7 +30,7 @@ def initial_fn(G):
 
 def energy_fn(state, G):
     # Minimize energy = minimize cost
-    return optimize.cost_fn(state, len(G))
+    return utils.cost_fn(state, len(G))
 
 def get_component(G, N, start):
     visited = [False] * N

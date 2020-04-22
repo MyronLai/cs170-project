@@ -1,12 +1,6 @@
-#!/usr/bin/python3
-import math, heapq
+import math
 import networkx as nx
 import numpy as np
-from scipy import optimize
-import scipy
-
-# TODO Once best placement found, run better approx algo for MCRT
-# TODO Numba
 
 def read_input(file):
     with open(file) as f:
@@ -40,9 +34,6 @@ def tree_to_nx(t):
             G.add_edge(v, t[v])
     return G
 
-def genetic_mcrt(graph):
-    pass
-
 def create_check_fn(graph):
     def check_fn(nodes):
         tree = [i for i in range(len(nodes)) if nodes[i]]
@@ -52,7 +43,6 @@ def create_check_fn(graph):
             touched.update(s)
         return len(touched) == len(nodes)
     return check_fn
-
 
 def cost_fn(adj, N):
     # https://www.geeksforgeeks.org/calculate-number-nodes-subtrees-using-dfs/
@@ -73,5 +63,3 @@ def cost_fn(adj, N):
             min_count = min(counts[v], counts[u])
             cost += 2 * min_count * (N - min_count) * w
     return cost
-
-#scipy.optimize.basinhopping(cost_fn, initial_placement, accept_test=check_fn)

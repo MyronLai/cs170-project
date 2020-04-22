@@ -1,6 +1,8 @@
 from heapdict import heapdict
 import math
 
+## Doesn't work for some reason, seems annoying to fix
+
 # http://telecom.inesctec.pt/~rcampos/a-fast-algorithm-for-computing-min-routing-cost-sp.pdf
 def campo_mcrt(graph):
     """
