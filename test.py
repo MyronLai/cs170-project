@@ -8,10 +8,10 @@ import numpy as np
 g = utils.read_input("inputs/25.in")
 g2 = utils.read_input("inputs/50.in")
 g3 = utils.read_input("inputs/100.in")
-gsmol = np.ones((5, 5))
-gcomp = np.ones((25, 25))
-gcomp2 = np.ones((50, 50))
-gcomp3 = np.ones((100, 100))
+gsmol = np.ones((5, 5)) - np.eye(5)
+gcomp = np.ones((25, 25)) - np.eye(25)
+gcomp2 = np.ones((50, 50)) - np.eye(50)
+gcomp3 = np.ones((100, 100)) - np.eye(100)
 
 def test_initial():
     print("Running")
@@ -40,6 +40,11 @@ def test_comp():
     plt.figure()
     nx.draw(utils.mat_to_nx(utils.shrink_mat(G)))
     plt.savefig("/tmp/gshrink.png")
+
+def test_output():
+    s = annealing.initial_fn(gsmol)
+    utils.write_output(gsmol, "/tmp/smol.txt")
+    utils.write_output(s, "/tmp/smoltree.txt")
 
 def test_mutate():
     G = gcomp
@@ -79,7 +84,7 @@ def test_anneal():
     G = g
     result, score = annealing.anneal(G, annealing.initial_fn, annealing.energy_fn, annealing.make_mutate_fn(0.3, 0.5), 120000, 0.0004)
     G = g3
-    result, score = annealing.anneal(G, 120000, 0.3, 0.5, 0.0004, print_energy=False)
+    result, score = annealing.anneal(G, 120000, 0.3, 0.5, 0.0004, print_energy=True)
 
 def test_cost():
     def floyd_warshall_brute_force(weights):
