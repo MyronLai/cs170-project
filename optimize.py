@@ -74,12 +74,21 @@ def campo_mcrt(graph):
     spanned_vertices = 0
     while spanned_vertices < N:
 
-
 def genetic_mcrt(graph):
     pass
 
-def check_fn(nodes):
-    return True # TODO: if valid placement
+
+def create_check_fn(graph):
+    def check_fn(nodes):
+        tree = [i for i in range(len(nodes)) if nodes[i]]
+        touched = set(tree)
+        for v in tree:
+            s = set([e[0] for e in graph[v]])
+            touched.update(s)
+        return len(touched) == len(nodes)
+    return check_fn
+
+
 
 def cost_fn(nodes):
     return cost(approx_mcrt(nodes))
