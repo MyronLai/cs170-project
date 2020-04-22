@@ -34,7 +34,7 @@ def initial_fn(G):
 @njit
 def mutate_fn(state, G, p_switch, p_prune):
     new_state = np.copy(state)
-    # Indicators for nodes which are in state (aka have connetions)
+    # Indicators for nodes which are in state (aka have connections)
     # Should be this: missing = ~G.any(axis=0)
     # But numba doesn't like
     missing = np.zeros(G.shape[0])
@@ -135,7 +135,7 @@ def mutate_fn(state, G, p_switch, p_prune):
 def anneal(G, iters, p_switch, p_prune, scale, print_energy=False):
     s = initial_fn(G)
     e = utils.cost_fn(s)
-    min_s, e_min = s, e
+    smin, emin = s, e
     for k in range(iters):
         temp = (k + 1) / iters
         s_new = mutate_fn(s, G, p_switch, p_prune)
@@ -145,10 +145,10 @@ def anneal(G, iters, p_switch, p_prune, scale, print_energy=False):
             e = e_new
             if print_energy:
                 print(e)
-            if e < e_min:
-                mins = s
-                e_min = e
+            if e < emin:
+                smin = s
+                emin = e
                 # No state nodes messes up the function, can't get better than 0 anyways
                 if e == 0:
                     break
-    return min_s, e_min
+    return smin, emin

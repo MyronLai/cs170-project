@@ -9,6 +9,7 @@ g = utils.read_input("inputs/25.in")
 g2 = utils.read_input("inputs/50.in")
 g3 = utils.read_input("inputs/100.in")
 gsmol = np.ones((5, 5)) - np.eye(5)
+gsmol2 = np.ones((10, 10)) - np.eye(10)
 gcomp = np.ones((25, 25)) - np.eye(25)
 gcomp2 = np.ones((50, 50)) - np.eye(50)
 gcomp3 = np.ones((100, 100)) - np.eye(100)
@@ -47,7 +48,7 @@ def test_output():
     utils.write_output(s, "/tmp/smoltree.txt")
 
 def test_mutate():
-    G = gcomp
+    G = gsmol2
     print("Original")
     state = annealing.initial_fn(G)
     plt.figure()
@@ -62,6 +63,7 @@ def test_mutate():
     s = utils.shrink_mat(state_prune)
     nx.draw(utils.mat_to_nx(s))
     plt.savefig("/tmp/pruned.png")
+    print(nx.is_tree(utils.mat_to_nx(s)))
     print(s.shape[0])
 
     print("Readding")
@@ -70,6 +72,7 @@ def test_mutate():
     s = utils.shrink_mat(state_add)
     nx.draw(utils.mat_to_nx(s))
     plt.savefig("/tmp/readded.png")
+    print(nx.is_tree(utils.mat_to_nx(s)))
     print(s.shape[0])
 
     print("Swapping")
@@ -78,8 +81,16 @@ def test_mutate():
     s = utils.shrink_mat(state_swap)
     nx.draw(utils.mat_to_nx(s))
     plt.savefig("/tmp/swapped.png")
+    print(nx.is_tree(utils.mat_to_nx(s)))
     print(s.shape[0])
 
 def test_anneal():
     G = g3
     result, score = annealing.anneal(G, 120000, 0.3, 0.5, 0.0004, print_energy=True)
+    print(score)
+    print("C: ", utils.cost_fn(result))
+    nx.draw(utils.mat_to_nx(G))
+    plt.savefig("/tmp/g.png")
+    plt.figure()
+    nx.draw(utils.mat_to_nx(result))
+    plt.savefig("/tmp/gres.png")
