@@ -54,16 +54,8 @@ def create_check_fn(graph):
     return check_fn
 
 
-def cost_fn(edges, weights):
+def cost_fn(adj):
     counts = [0] * len(edges)
-
-    # Build adjacency list
-    adj = [[] for i in range(len(edges))]
-    for i in range(len(edges)):
-        if i == edges[i]:
-            continue
-        adj[i].append((edges[i], weights[i]))
-        adj[edges[i]].append((i, weights[i]))
 
     # https://www.geeksforgeeks.org/calculate-number-nodes-subtrees-using-dfs/
     def count_nodes(s, e):
