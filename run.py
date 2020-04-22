@@ -11,7 +11,7 @@ for file in os.listdir(path):
         infile = f"{path}/{file}"
         G = utils.read_input(infile)
         print(file, end="")
-        result, score = annealing.anneal(G, annealing.initial_fn, annealing.energy_fn, annealing.make_mutate_fn(0.3, 0.5), 120000, 0.0004)
+        result, score = annealing.anneal(G, 120000, 0.3, 0.5, 0.0004)
         print(f": {score}")
         outfile = f"{path}/out/{file.split('.')[0]}.out"
         # Remove disconnected nodes because they aren't really part of the state
