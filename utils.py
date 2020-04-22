@@ -1,7 +1,9 @@
 import math
 import networkx as nx
 import numpy as np
+from numba import njit
 
+# numba does not like this for some reason
 def read_input(file):
     """ Read adjacency matrix from input """
     with open(file) as f:
@@ -15,6 +17,7 @@ def read_input(file):
         g[v][u] = w
     return g
 
+@njit
 def write_output(G, file):
     """ Write adjacency matrix to input """
     lines = []
@@ -29,6 +32,7 @@ def write_output(G, file):
     with open(file, "w") as f:
         f.writelines(lines)
 
+# numba does not like this for some reason
 def shrink_mat(G):
     """ Returns a new adjacency matrix with all the zero rows/columns (disconnected nodes) removed """
     Grem = G[~np.all(G == 0, axis=0)]
@@ -47,6 +51,7 @@ def mat_to_nx(G):
                 g.add_edge(u, v, weight=G[u][v])
     return g
 
+@njit
 def get_component(G, start):
     """ Get all nodes in the connected component around start """
     visited = np.zeros(G.shape[0])
@@ -61,7 +66,7 @@ def get_component(G, start):
                 stack.append(v)
     return nodes
 
-
+@njit
 def cost_fn(G):
     # https://www.geeksforgeeks.org/calculate-number-nodes-subtrees-using-dfs/
     # TODO TEST!
