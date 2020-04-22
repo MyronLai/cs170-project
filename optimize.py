@@ -54,8 +54,37 @@ def create_check_fn(graph):
     return check_fn
 
 
+def cost_fn(edges, weights):
+    counts = [0] * len(edges)
 
-def cost_fn(nodes):
-    return cost(approx_mcrt(nodes))
+    # Build adjacency list
+    adj = [[] for i in range(len(edges))]
+    for i in range(len(edges)):
+        if i == edges[i]:
+            continue
+        adj[i].append((edges[i], weights[i]))
+        adj[edges[i]].append((i, weights[i]))
+
+    # https://www.geeksforgeeks.org/calculate-number-nodes-subtrees-using-dfs/
+    def count_nodes(s, e):
+        counts[s] = 1
+        for (u, w) in adj[s]:
+            if u == e:
+                continue
+
+            count_nodes(u, s)
+            counts[s] += counts[u]
+    
+    count_nodes(0, 0)
+
+    # I think this is right but my brain just broke and it might not be idk
+    # Mostly not sure about the weights[i] part
+    cost = 0
+    for i in range(len(edges)):
+        cost += 2 * counts[i] * (len(edges) - counts[i]) * weights[i]
+
+    return cost
+    
+
 
 scipy.optimize.basinhopping(cost_fn, initial_placement, accept_test=check_fn)
