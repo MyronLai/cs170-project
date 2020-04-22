@@ -100,7 +100,6 @@ def make_mutate_fn(p_switch, p_prune):
                     for neighbor, w in G[m]:
                         if neighbor in state:
                             eligible_edges.append((m, neighbor, w))
-                u, v, w = random.choice(eligible_edges)
                 if not eligible_edges:
                     # Shouldn't happen I think
                     print("================================")
@@ -110,6 +109,7 @@ def make_mutate_fn(p_switch, p_prune):
                     print("================================")
                     return new_state
                 else:
+                    u, v, w = random.choice(eligible_edges)
                     new_state[u] = [(v, w)]
                     new_state[v].append((u, w))
                     return new_state
@@ -146,7 +146,7 @@ def make_mutate_fn(p_switch, p_prune):
         return new_state
     return mutate_fn
 
-def anneal(G, initial_fn, energy_fn, mutate_fn, iters, scale):
+def anneal(G, initial_fn, energy_fn, mutate_fn, iters, scale, print_energy=False):
     s = initial_fn(G)
     e = energy_fn(s, G)
     min_s, e_min = s, e
@@ -157,8 +157,12 @@ def anneal(G, initial_fn, energy_fn, mutate_fn, iters, scale):
         if e_new < e or random.random() < math.exp(-(e_new - e)*temp*scale):
             s = s_new
             e = e_new
-            print(e)
+            if print_energy:
+                print(e)
             if e < e_min:
                 mins = s
                 e_min = e
+                # No state nodes messes up the function, can't get better than 0 anyways
+                if e == 0:
+                    break
     return min_s, e_min

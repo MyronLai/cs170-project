@@ -11,10 +11,24 @@ def read_input(file):
         g[i] = []
     for line in lines[1:]:
         sp = line.split()
-        u, v, w = int(sp[0]), int(sp[1]), int(sp[2])
+        u, v, w = int(sp[0]), int(sp[1]), float(sp[2])
         g[u].append((v, w))
         g[v].append((u, w))
     return g
+
+def write_output(G, file):
+    lines = []
+    lines.append(str(len(G)) + "\n")
+    s = set()
+    for u in G:
+        for v, w in G[u]:
+            u, v = min(u, v), max(u, v)
+            if (u, v) not in s:
+                lines.append(f"{u} {v} {w}\n")
+                s.add((u, v))
+    with open(file, "w") as f:
+        f.writelines(lines)
+
 
 def adj_to_nx(g):
     """ Adjacency list to NetworkX """
@@ -55,6 +69,8 @@ def cost_fn(adj, N):
                 continue
             count_nodes(u, s)
             counts[s] += counts[u]
+    if len(adj) == 0:
+        return 0
     first = next(iter(adj.keys()))
     count_nodes(first, first)
     cost = 0
