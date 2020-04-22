@@ -8,13 +8,16 @@ import numpy as np
 g = utils.read_input("inputs/25.in")
 g2 = utils.read_input("inputs/50.in")
 g3 = utils.read_input("inputs/100.in")
+gcomp = np.ones((10, 10))
 
 def test_initial():
     print("Running")
-    state = annealing.initial_fn(g3)
+    state = annealing.initial_fn(gcomp)
     print("Done")
     nx.draw(utils.mat_to_nx(state))
     plt.savefig("/tmp/tree.png")
+    print(nx.is_tree(utils.mat_to_nx(state)))
+    print(np.all(utils.shrink_mat(state) == state))
 
 def test_comp():
     G = np.zeros((6, 6))

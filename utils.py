@@ -25,10 +25,10 @@ def write_output(G, file):
     s = set()
     for u in range(G.shape[0]):
         for v in np.nonzero(G[u])[0]:
-            u, v = min(u, v), max(u, v)
-            if (u, v) not in s:
-                lines.append(f"{u} {v} {G[u][v]}\n")
-                s.add((u, v))
+            minu, minv = min(u, v), max(u, v)
+            if (minu, minv) not in s:
+                lines.append(f"{minu} {minv} {G[minu][minv]}\n")
+                s.add((minu, minv))
     with open(file, "w") as f:
         f.writelines(lines)
 
@@ -46,9 +46,10 @@ def mat_to_nx(G):
     s = set()
     for u in range(G.shape[0]):
         for v in np.nonzero(G[u])[0]:
-            u, v = min(u, v), max(u, v)
-            if (u, v) not in s:
-                g.add_edge(u, v, weight=G[u][v])
+            minu, minv = min(u, v), max(u, v)
+            if (minu, minv) not in s:
+                g.add_edge(minu, minv, weight=G[minu][minv])
+                s.add((minu, minv))
     return g
 
 @njit

@@ -8,42 +8,29 @@ import numpy as np
 def initial_fn(G):
     # Generate random spanning tree
     # Choose random root node, expand tree out randomly
-    # TODO This can be slow
-    state = {}
-    for v in G:
-        state[v] = []
-    marked = [False] * len(G)
+    state = np.zeros(G.shape)
+    marked = np.zeros(G.shape[0])
     visited = 1
-    curr = random.randrange(len(G))
-    marked[curr] = True
-    edges = [(curr, x[0], x[1]) for x in G[curr]]
-    while visited < len(G):
-        u, v, w = random.choice(list(edges))
-        edges.remove((u, v, w))
+    curr = np.random.randint(G.shape[0])
+    marked[curr] = 1
+    edges = set()
+    for neighbor in np.nonzero(G[curr])[0]:
+        edges.add((curr, neighbor))
+    while visited < G.shape[0]:
+        u, v = random.sample(edges, 1)[0]
+        edges.remove((u, v))
         if not marked[v]:
             marked[v] = True
-            state[v].append((u, w))
-            state[u].append((v, w))
-            edges.extend([(v, x[0], x[1]) for x in G[v]])
+            state[v][u] = G[u][v]
+            state[u][v] = G[u][v]
+            for neighbor in np.nonzero(G[v])[0]:
+                edges.add((v, neighbor))
             visited += 1
     return state
 
-def energy_fn(state, G):
+def energy_fn(state):
     # Minimize energy = minimize cost
-    return utils.cost_fn(state, len(G))
-
-def get_component(G, N, start):
-    visited = [False] * N
-    stack = [start]
-    nodes = set()
-    while stack:
-        curr = stack.pop()
-        visited[curr] = True
-        nodes.add(curr)
-        for v, _ in G[curr]:
-            if not visited[v]:
-                stack.append(v)
-    return nodes
+    return utils.cost_fn(state)
 
 # TODO: Consider optimizing with sets instead of adj. list
 # Don't store weight in graph directly, have separate list?
@@ -133,7 +120,7 @@ def make_mutate_fn(p_switch, p_prune):
             if v not in incorporated:
                 add_edges.append((u, v, w))
                 # Add all the elements in the component to the visited set
-                comp = get_component(new_state, len(G), v)
+                comp = utils.get_component(new_state, v)
                 incorporated = incorporated.union(comp)
                 # Add all the edges coming off the component into a non-visited set
                 for neighbor in comp:
