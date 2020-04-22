@@ -3,79 +3,85 @@ import networkx as nx
 import numpy as np
 
 def read_input(file):
+    """ Read adjacency matrix from input """
     with open(file) as f:
         lines = f.readlines()
     N = int(lines[0])
-    g = {}
-    for i in range(N):
-        g[i] = []
+    g = np.zeros((N, N))
     for line in lines[1:]:
         sp = line.split()
         u, v, w = int(sp[0]), int(sp[1]), float(sp[2])
-        g[u].append((v, w))
-        g[v].append((u, w))
+        g[u][v] = w
+        g[v][u] = w
     return g
 
 def write_output(G, file):
+    """ Write adjacency matrix to input """
     lines = []
     lines.append(str(len(G)) + "\n")
     s = set()
-    for u in G:
-        for v, w in G[u]:
+    for u in range(G.shape[0]):
+        for v in np.nonzero(G[u])[0]:
             u, v = min(u, v), max(u, v)
             if (u, v) not in s:
-                lines.append(f"{u} {v} {w}\n")
+                lines.append(f"{u} {v} {G[u][v]}\n")
                 s.add((u, v))
     with open(file, "w") as f:
         f.writelines(lines)
 
+def shrink_mat(G):
+    """ Returns a new adjacency matrix with all the zero rows/columns (disconnected nodes) removed """
+    Grem = G[~np.all(G == 0, axis=0)]
+    Grem = Grem[~np.all(Grem == 0, axis=1)]
+    return Grem
 
-def adj_to_nx(g):
-    """ Adjacency list to NetworkX """
-    G = nx.Graph()
-    G.add_nodes_from(g.keys())
-    for u in g:
-        for v, w in g[u]:
-            G.add_edge(u, v, weight=w)
-    return G
+def mat_to_nx(G):
+    """ Adjacency matrix to NetworkX """
+    g = nx.Graph()
+    g.add_nodes_from(list(range(G.shape[0])))
+    s = set()
+    for u in range(G.shape[0]):
+        for v in np.nonzero(G[u])[0]:
+            u, v = min(u, v), max(u, v)
+            if (u, v) not in s:
+                g.add_edge(u, v, weight=G[u][v])
+    return g
 
-def tree_to_nx(t):
-    """ List of parent pointers to NetworkX  """
-    G = nx.Graph()
-    G.add_nodes_from(list(range(len(t))))
-    for v in t:
-        if t[v] != v:
-            G.add_edge(v, t[v])
-    return G
+def get_component(G, start):
+    """ Get all nodes in the connected component around start """
+    visited = np.zeros(G.shape[0])
+    stack = [start]
+    nodes = set()
+    while stack:
+        curr = stack.pop()
+        visited[curr] = True
+        nodes.add(curr)
+        for v in np.nonzero(G[curr])[0]:
+            if not visited[v]:
+                stack.append(v)
+    return nodes
 
-def create_check_fn(graph):
-    def check_fn(nodes):
-        tree = [i for i in range(len(nodes)) if nodes[i]]
-        touched = set(tree)
-        for v in tree:
-            s = set([e[0] for e in graph[v]])
-            touched.update(s)
-        return len(touched) == len(nodes)
-    return check_fn
 
-def cost_fn(adj, N):
+def cost_fn(G):
     # https://www.geeksforgeeks.org/calculate-number-nodes-subtrees-using-dfs/
     # TODO TEST!
-    counts = {}
+    # Return 0 for empty graph
+    if not np.any(G):
+        return 0
+    counts = np.zeros(G.shape[0])
     def count_nodes(s, e):
         counts[s] = 1
-        for (u, w) in adj[s]:
+        for u in np.nonzero(G[s])[0]:
             if u == e:
                 continue
             count_nodes(u, s)
             counts[s] += counts[u]
-    if len(adj) == 0:
-        return 0
-    first = next(iter(adj.keys()))
+    first = np.nonzero(G)[0][0]
     count_nodes(first, first)
     cost = 0
-    for v in adj:
-        for u, w in adj[v]:
+    for u in range(G.shape[0]):
+        for v in np.nonzero(G[u])[0]:
             min_count = min(counts[v], counts[u])
-            cost += 2 * min_count * (N - min_count) * w
+            # Don't multiply by 2 since each edge is counted twice anyways
+            cost += min_count * (G.shape[0] - min_count) * G[u][v]
     return cost
