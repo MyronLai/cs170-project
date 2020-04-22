@@ -25,8 +25,8 @@ def initial_fn(G):
     return state
 
 def energy_fn(state, G):
-    # Minimize energy = maximize cost
-    return -optimize.cost_fn(state, len(G))
+    # Minimize energy = minimize cost
+    return optimize.cost_fn(state, len(G))
 
 def get_component(G, N, start):
     visited = [False] * N

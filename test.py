@@ -72,6 +72,6 @@ def test_mutate():
 
 def test_anneal():
     G = g
-    result, score = annealing.anneal(G, annealing.initial_fn, annealing.energy_fn, annealing.make_mutate_fn(0.2, 0.2), 100000, 0.001)
+    result, score = annealing.anneal(G, annealing.initial_fn, annealing.energy_fn, annealing.make_mutate_fn(0.3, 0.5), 120000, 0.0004)
 
 test_anneal()
