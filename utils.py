@@ -83,6 +83,7 @@ def get_component(G, start):
     return nodes
 
 @njit
+# https://www.geeksforgeeks.org/calculate-number-nodes-subtrees-using-dfs/
 def count_nodes(G, s, e, counts):
     counts[s] = 1
     for u in np.nonzero(G[s])[0]:
@@ -93,7 +94,6 @@ def count_nodes(G, s, e, counts):
 
 @njit
 def cost_fn(G):
-    # https://www.geeksforgeeks.org/calculate-number-nodes-subtrees-using-dfs/
     # TODO TEST!
     # Return 0 for empty graph
     if not np.any(G):
