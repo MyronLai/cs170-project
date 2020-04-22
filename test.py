@@ -8,7 +8,10 @@ import numpy as np
 g = utils.read_input("inputs/25.in")
 g2 = utils.read_input("inputs/50.in")
 g3 = utils.read_input("inputs/100.in")
-gcomp = np.ones((100, 100))
+gsmol = np.ones((5, 5))
+gcomp = np.ones((25, 25))
+gcomp2 = np.ones((50, 50))
+gcomp3 = np.ones((100, 100))
 
 def test_initial():
     print("Running")
@@ -39,38 +42,39 @@ def test_comp():
     plt.savefig("/tmp/gshrink.png")
 
 def test_mutate():
-    G = g
+    G = gcomp
     print("Original")
     state = annealing.initial_fn(G)
     plt.figure()
-    nx.draw(utils.mat_to_nx(state))
+    s = utils.shrink_mat(state)
+    nx.draw(utils.mat_to_nx(s))
     plt.savefig("/tmp/original.png")
-    print(len(state))
+    print(s.shape[0])
 
     print("Removing")
-    mutate_prune = annealing.make_mutate_fn(1, 1)
-    state_prune = mutate_prune(state, G)
+    state_prune = annealing.mutate_fn(state, G, 1, 1)
     plt.figure()
-    nx.draw(utils.mat_to_nx(state_prune))
+    s = utils.shrink_mat(state_prune)
+    nx.draw(utils.mat_to_nx(s))
     plt.savefig("/tmp/pruned.png")
-    print(len(state_prune))
+    print(s.shape[0])
 
-    print("Re-adding")
-    mutate_add = annealing.make_mutate_fn(1, 0)
-    state_add = mutate_add(state_prune, G)
+    print("Readding")
+    state_add = annealing.mutate_fn(state_prune, G, 1, 0)
     plt.figure()
-    nx.draw(utils.mat_to_nx(state_add))
+    s = utils.shrink_mat(state_add)
+    nx.draw(utils.mat_to_nx(s))
     plt.savefig("/tmp/readded.png")
-    print(len(state_add))
+    print(s.shape[0])
 
     print("Swapping")
-    mutate_swap = annealing.make_mutate_fn(0, 0)
-    state_swap = mutate_swap(state_prune, G)
+    state_swap = annealing.mutate_fn(state_prune, G, 0, 0)
     plt.figure()
-    nx.draw(utils.mat_to_nx(state_swap))
+    s = utils.shrink_mat(state_swap)
+    nx.draw(utils.mat_to_nx(s))
     plt.savefig("/tmp/swapped.png")
-    print(len(state_swap))
+    print(s.shape[0])
 
 def test_anneal():
     G = g
-    result, score = annealing.anneal(G, annealing.initial_fn, annealing.energy_fn, annealing.make_mutate_fn(0.3, 0.5), 120000, 0.0004)
+    result, score = annealing.anneal(G, 120000, 0.3, 0.5, 0.0004, print_energy=True)
