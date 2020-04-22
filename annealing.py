@@ -5,6 +5,7 @@ from numba.core import types
 from numba.typed import Dict
 import numpy as np
 
+@njit
 def initial_fn(G):
     # Generate random spanning tree
     # Choose random root node, expand tree out randomly
@@ -13,18 +14,19 @@ def initial_fn(G):
     visited = 1
     curr = np.random.randint(G.shape[0])
     marked[curr] = 1
-    edges = set()
+    # Numba doesn't like random.sample so we use list
+    edges = []
     for neighbor in np.nonzero(G[curr])[0]:
-        edges.add((curr, neighbor))
+        edges.append((curr, neighbor))
     while visited < G.shape[0]:
-        u, v = random.sample(edges, 1)[0]
+        u, v = edges[np.random.randint(len(edges))]
         edges.remove((u, v))
         if not marked[v]:
             marked[v] = True
             state[v][u] = G[u][v]
             state[u][v] = G[u][v]
             for neighbor in np.nonzero(G[v])[0]:
-                edges.add((v, neighbor))
+                edges.append((v, neighbor))
             visited += 1
     return state
 

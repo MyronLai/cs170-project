@@ -8,7 +8,7 @@ import numpy as np
 g = utils.read_input("inputs/25.in")
 g2 = utils.read_input("inputs/50.in")
 g3 = utils.read_input("inputs/100.in")
-gcomp = np.ones((10, 10))
+gcomp = np.ones((100, 100))
 
 def test_initial():
     print("Running")
