@@ -30,8 +30,8 @@ def initial_fn(G):
             visited += 1
     return state
 
-# Can't be nested because numba
 @njit
+# Can't be nested because numba
 def mutate_fn(state, G, p_switch, p_prune):
     new_state = np.copy(state)
     # Indicators for nodes which are in state (aka have connetions)
@@ -108,10 +108,12 @@ def mutate_fn(state, G, p_switch, p_prune):
     incorporated = set([v])
     # Possible edges to other components
     curr_edges = []
-    for neighbor in np.nonzero(state)[0]:
+    for neighbor in np.nonzero(G[v])[0]:
         curr_edges.append((v, neighbor))
     while len(incorporated) < len(state):
         # Pick an edge randomly
+        if not curr_edges:
+            print("RAN OUT OF EDGES!! Probably shouldn't happen :/")
         u, v = curr_edges[np.random.randint(len(curr_edges))]
         curr_edges.remove((u, v))
         # If the connected component isn't absorbed, use it

@@ -76,5 +76,5 @@ def test_mutate():
     print(s.shape[0])
 
 def test_anneal():
-    G = g
-    result, score = annealing.anneal(G, 120000, 0.3, 0.5, 0.0004, print_energy=True)
+    G = g3
+    result, score = annealing.anneal(G, 120000, 0.3, 0.5, 0.0004, print_energy=False)
