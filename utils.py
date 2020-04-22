@@ -22,6 +22,7 @@ def read_input(file):
         g[v][u] = w
     return g
 
+# numba does not like
 def write_output(G, file):
     """ Write adjacency matrix to input
         V1 V2 V3 ...
@@ -46,7 +47,7 @@ def write_output(G, file):
     with open(file, "w") as f:
         f.writelines(lines)
 
-# numba does not like this for some reason
+# numba does not like
 def shrink_mat(G):
     """ Returns a new adjacency matrix with all the zero rows/columns (disconnected nodes) removed """
     Grem = G[~np.all(G == 0, axis=0)]

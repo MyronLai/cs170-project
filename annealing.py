@@ -30,8 +30,8 @@ def initial_fn(G):
             visited += 1
     return state
 
-@njit
 # Can't be nested because numba
+@njit
 def mutate_fn(state, G, p_switch, p_prune):
     new_state = np.copy(state)
     # Indicators for nodes which are in state (aka have connetions)
