@@ -25,7 +25,7 @@ def read_input(file):
 def adj_to_nx(g):
     """ Adjacency list to NetworkX """
     G = nx.Graph()
-    G.add_nodes_from(list(range(len(g))))
+    G.add_nodes_from(g.keys())
     for u in g:
         for v, w in g[u]:
             G.add_edge(u, v, weight=w)
@@ -54,29 +54,24 @@ def create_check_fn(graph):
     return check_fn
 
 
-def cost_fn(adj):
-    counts = [0] * len(edges)
-
+def cost_fn(adj, N):
     # https://www.geeksforgeeks.org/calculate-number-nodes-subtrees-using-dfs/
+    # TODO TEST!
+    counts = {}
     def count_nodes(s, e):
         counts[s] = 1
         for (u, w) in adj[s]:
             if u == e:
                 continue
-
             count_nodes(u, s)
             counts[s] += counts[u]
-    
-    count_nodes(0, 0)
-
-    # I think this is right but my brain just broke and it might not be idk
-    # Mostly not sure about the weights[i] part
+    first = next(iter(adj.keys()))
+    count_nodes(first, first)
     cost = 0
-    for i in range(len(edges)):
-        cost += 2 * counts[i] * (len(edges) - counts[i]) * weights[i]
-
+    for v in adj:
+        for u, w in adj[v]:
+            min_count = min(counts[v], counts[u])
+            cost += 2 * min_count * (N - min_count) * w
     return cost
-    
 
-
-scipy.optimize.basinhopping(cost_fn, initial_placement, accept_test=check_fn)
+#scipy.optimize.basinhopping(cost_fn, initial_placement, accept_test=check_fn)
