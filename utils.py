@@ -5,7 +5,12 @@ from numba import njit
 
 # numba does not like this for some reason
 def read_input(file):
-    """ Read adjacency matrix from input """
+    """ Read adjacency matrix from input
+        N
+        U1 V2 W1
+        U2 V2 W2
+        ...
+    """
     with open(file) as f:
         lines = f.readlines()
     N = int(lines[0])
@@ -17,18 +22,27 @@ def read_input(file):
         g[v][u] = w
     return g
 
-@njit
 def write_output(G, file):
-    """ Write adjacency matrix to input """
+    """ Write adjacency matrix to input
+        V1 V2 V3 ...
+        U1 V1
+        U2 V2
+        ...
+    """
     lines = []
-    lines.append(str(len(G)) + "\n")
+    lines.append("")
+    present = set()
     s = set()
     for u in range(G.shape[0]):
         for v in np.nonzero(G[u])[0]:
+            present.add(u)
+            present.add(v)
             minu, minv = min(u, v), max(u, v)
             if (minu, minv) not in s:
-                lines.append(f"{minu} {minv} {G[minu][minv]}\n")
+                v = str(minu) + " " + str(minv) + "\n"
+                lines.append(v)
                 s.add((minu, minv))
+    lines[0] = " ".join([str(v) for v in present]) + "\n"
     with open(file, "w") as f:
         f.writelines(lines)
 

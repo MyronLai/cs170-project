@@ -14,8 +14,6 @@ for file in os.listdir(path):
         result, score = annealing.anneal(G, 120000, 0.3, 0.5, 0.0004)
         print(f": {score}")
         outfile = f"{path}/out/{file.split('.')[0]}.out"
-        # Remove disconnected nodes because they aren't really part of the state
-        shrink_res = utils.shrink_mat(result)
-        utils.write_output(shrink_res, outfile)
+        utils.write_output(result, outfile)
         # TODO REMOVE, Just while fixing bugs
         os.remove(infile)
