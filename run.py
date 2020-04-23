@@ -12,7 +12,7 @@ def runfile(infile, outfile):
     utils.write_output(result, G, outfile)
     assert utils.verify_in_out(G, outfile)
     # TODO REMOVE, Just while fixing bugs
-    #os.remove(infile)
+    os.remove(infile)
 
 if __name__ == "__main__":
     path = sys.argv[1]
@@ -20,7 +20,7 @@ if __name__ == "__main__":
         os.mkdir(f"{path}/out")
     print("Running on dir", path)
     for file in os.listdir(path):
-        if file.split(".")[1] == "in":
+        if "." in file and file.split(".")[1] == "in":
             infile = f"{path}/{file}"
             outfile = f"{path}/out/{file.split('.')[0]}.out"
             runfile(infile, outfile)
