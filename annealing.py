@@ -74,6 +74,9 @@ def mutate_fn(state, G, p_switch, p_prune):
                 v = k[np.random.randint(len(k))]
                 new_state[v] = np.zeros(G.shape[0])
                 new_state[:, v] = np.zeros(G.shape[0])
+                #print("Checking removal")
+                #utils.write_output(new_state, G, "/tmp/res.txt")
+                #assert utils.verify_in_out(G, "/tmp/res.txt")
                 return new_state
         # Check if all vertices are in state
         # Add vertex if possible
@@ -92,11 +95,14 @@ def mutate_fn(state, G, p_switch, p_prune):
                 print(state)
                 print(G)
                 print("================================")
-                return new_state
+                assert False
             else:
                 u, v = eligible_edges[np.random.randint(len(eligible_edges))]
                 new_state[u][v] = G[u][v]
                 new_state[v][u] = G[u][v]
+                #print("Checking adding")
+                #utils.write_output(new_state, G, "/tmp/res.txt")
+                #assert utils.verify_in_out(G, "/tmp/res.txt")
                 return new_state
     # Switch only edges around
     # Pick random vertex and disconnect it, reconnecting all components randomly
@@ -108,19 +114,21 @@ def mutate_fn(state, G, p_switch, p_prune):
     incorporated = set([v])
     # Possible edges to other components
     curr_edges = []
-    for neighbor in np.nonzero(G[v])[0]:
+    # Add edges to nodes which are included and have edges
+    for neighbor in np.nonzero(G[v] * present)[0]:
         curr_edges.append((v, neighbor))
-    while len(incorporated) < len(state):
+    edges_to_add = []
+    while len(incorporated) < len(present_vals):
         # Pick an edge randomly
         if not curr_edges:
             print("RAN OUT OF EDGES!! Probably shouldn't happen :/")
+            assert False
         u, v = curr_edges[np.random.randint(len(curr_edges))]
         curr_edges.remove((u, v))
         # If the connected component isn't absorbed, use it
         if v not in incorporated:
             # Add the edge to the state
-            new_state[u][v] = G[u][v]
-            new_state[v][u] = G[u][v]
+            edges_to_add.append((u, v))
             # Add all the elements in the component to the visited set
             comp = utils.get_component(new_state, v)
             incorporated = incorporated.union(comp)
@@ -129,6 +137,12 @@ def mutate_fn(state, G, p_switch, p_prune):
                 for n2 in np.nonzero(G[neighbor])[0]:
                     if n2 not in incorporated and not missing[n2]:
                         curr_edges.append((neighbor, n2))
+    for u, v in edges_to_add:
+        new_state[u][v] = G[u][v]
+        new_state[v][u] = G[u][v]
+    #print("Checking swap")
+    #utils.write_output(new_state, G, "/tmp/res.txt")
+    #assert utils.verify_in_out(G, "/tmp/res.txt")
     return new_state
 
 @njit
