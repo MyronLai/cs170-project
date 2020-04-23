@@ -150,6 +150,9 @@ def anneal(G, iters, p_switch, p_prune, scale, print_energy=False):
     s = initial_fn(G)
     e = utils.cost_fn(s)
     smin, emin = s, e
+    # Because some people put empty graphs to start with smh
+    if e == 0:
+        return smin, emin
     for k in range(iters):
         temp = (k + 1) / iters
         s_new = mutate_fn(s, G, p_switch, p_prune)
