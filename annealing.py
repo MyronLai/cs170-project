@@ -39,10 +39,10 @@ def mutate_fn(state, G, p_switch, p_prune):
     # But numba doesn't like
     missing = np.zeros(G.shape[0])
     # 1 - because numba doesn't like ~
-    present = 1 - missing
-    present_vals = np.nonzero(present)[0]
     for v in range(G.shape[0]):
         missing[v] = ~np.any(G[v])
+    present = 1 - missing
+    present_vals = np.nonzero(present)[0]
     # Add vertex, remove vertex, or reconfigure edges
     if random.random() < p_switch:
         # Add/Remove vertices
@@ -74,6 +74,7 @@ def mutate_fn(state, G, p_switch, p_prune):
                 v = k[np.random.randint(len(k))]
                 new_state[v] = np.zeros(G.shape[0])
                 new_state[:, v] = np.zeros(G.shape[0])
+                utils.write_output(new_state, G, "/tmp/g.txt")
                 return new_state
         # Check if all vertices are in state
         # Add vertex if possible

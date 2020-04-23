@@ -22,7 +22,7 @@ def test_initial():
     nx.draw(utils.mat_to_nx(state))
     plt.savefig("/tmp/tree.png")
     utils.write_output(state, G, "/tmp/res.txt")
-    utils.verify_in_out(G, "/tmp/res.txt")
+    assert utils.verify_in_out(G, "/tmp/res.txt")
 
 def test_comp():
     G = np.zeros((6, 6))
@@ -96,7 +96,7 @@ def test_anneal():
     nx.draw(utils.mat_to_nx(result))
     plt.savefig("/tmp/gres.png")
     utils.write_output(result, G, "/tmp/res.txt")
-    utils.verify_in_out(G, "/tmp/res.txt")
+    assert utils.verify_in_out(G, "/tmp/res.txt")
 
 def test_cost():
     def floyd_warshall_brute_force(weights):

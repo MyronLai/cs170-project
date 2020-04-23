@@ -10,7 +10,7 @@ def runfile(infile, outfile):
     result, score = annealing.anneal(G, 120000, 0.2, 0.6, 0.0004, print_energy=False)
     print(f"- {score}")
     utils.write_output(result, G, outfile)
-    utils.verify_in_out(G, outfile)
+    assert utils.verify_in_out(G, outfile)
     # TODO REMOVE, Just while fixing bugs
     #os.remove(infile)
 

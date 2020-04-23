@@ -73,7 +73,7 @@ def verify_in_out(G, outfile):
         g.add_edge(v1, v2)
     if not nx.is_tree(g):
         print("Not tree!")
-        sys.exit(1)
+        return False
     for v in range(G.shape[0]):
         if v not in verts:
             success = False
@@ -83,8 +83,9 @@ def verify_in_out(G, outfile):
                     break
             if not success:
                 print("Not everything is connected!", v)
-                sys.exit(1)
-    print("Success!")
+                return False
+    print("Successfully verified!")
+    return True
 
 # numba does not like
 def shrink_mat(G):
