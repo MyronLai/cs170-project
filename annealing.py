@@ -38,6 +38,9 @@ def mutate_fn(state, G, p_switch, p_prune):
     # Should be this: missing = ~G.any(axis=0)
     # But numba doesn't like
     missing = np.zeros(G.shape[0])
+    # 1 - because numba doesn't like ~
+    present = 1 - missing
+    present_vals = np.nonzero(present)[0]
     for v in range(G.shape[0]):
         missing[v] = ~np.any(G[v])
     # Add vertex, remove vertex, or reconfigure edges
@@ -53,7 +56,7 @@ def mutate_fn(state, G, p_switch, p_prune):
                     success = True
                     reached = set()
                     # Make sure all neighbors are reachable from other state nodes
-                    for v2 in range(G.shape[0]):
+                    for v2 in present_vals:
                         if v2 != v:
                             for neighbor in np.nonzero(G[v2])[0]:
                                 if neighbor not in reached:
@@ -97,9 +100,6 @@ def mutate_fn(state, G, p_switch, p_prune):
                 return new_state
     # Switch only edges around
     # Pick random vertex and disconnect it, reconnecting all components randomly
-    # 1 - because numba doesn't like ~
-    present = 1 - missing
-    present_vals = np.nonzero(present)[0]
     v = np.random.choice(present_vals)
     # Clears all edges on v
     new_state[v] = np.zeros(G.shape[0])

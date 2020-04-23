@@ -15,13 +15,14 @@ gcomp2 = np.ones((50, 50)) - np.eye(50)
 gcomp3 = np.ones((100, 100)) - np.eye(100)
 
 def test_initial():
+    G = g
     print("Running")
-    state = annealing.initial_fn(gcomp)
+    state = annealing.initial_fn(G)
     print("Done")
     nx.draw(utils.mat_to_nx(state))
     plt.savefig("/tmp/tree.png")
-    print(nx.is_tree(utils.mat_to_nx(state)))
-    print(np.all(utils.shrink_mat(state) == state))
+    utils.write_output(state, G, "/tmp/res.txt")
+    utils.verify_in_out(G, "/tmp/res.txt")
 
 def test_comp():
     G = np.zeros((6, 6))
@@ -85,7 +86,7 @@ def test_mutate():
     print(s.shape[0])
 
 def test_anneal():
-    G = gsmol
+    G = g
     result, score = annealing.anneal(G, 120000, 1, 1, 0.0004, print_energy=True)
     print(score)
     print("C: ", utils.cost_fn(result))
