@@ -16,5 +16,6 @@ for file in os.listdir(path):
         print(f"- {score}")
         outfile = f"{path}/out/{file.split('.')[0]}.out"
         utils.write_output(result, G, outfile)
+        utils.verify_in_out(G, outfile)
         # TODO REMOVE, Just while fixing bugs
         os.remove(infile)

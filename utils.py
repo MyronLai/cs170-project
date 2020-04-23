@@ -2,6 +2,7 @@ import math
 import networkx as nx
 import numpy as np
 from numba import njit
+import sys
 
 # numba does not like this for some reason
 def read_input(file):
@@ -45,15 +46,43 @@ def write_output(G, G_orig, file):
                 lines.append(v)
                 s.add((minu, minv))
     if len(present) == 0:
+        success = False
         for v in range(G.shape[0]):
-            if np.sum(G[v] == 0) == 1:
-                lines[0] = v + "\n"
+            # If connected to everything (or all but itself technically)
+            if np.sum(G_orig[v] == 0) <= 1:
+                lines[0] = str(v) + "\n"
+                success = True
                 break
-        print("FAILED TO FIND VALID VERTEX!!!")
+        if not success:
+            print("FAILED TO FIND VALID VERTEX!!!")
+            sys.exit(1)
     else:
         lines[0] = " ".join([str(v) for v in present]) + "\n"
     with open(file, "w") as f:
         f.writelines(lines)
+
+def verify_in_out(G, outfile):
+    with open(outfile) as f:
+        lines = f.readlines()
+    verts = [int(x) for x in lines[0].split(" ")]
+    g = nx.Graph()
+    g.add_nodes_from(verts)
+    for line in lines[1:]:
+        sp = line.split(" ")
+        v1, v2 = int(sp[0]), int(sp[1])
+        g.add_edge(v1, v2)
+    if not nx.is_tree(g):
+        print("Not tree!")
+    for v in range(G.shape[0]):
+        if v not in verts:
+            success = False
+            for v2 in verts:
+                if G[v][v2]:
+                    success = True
+                    break
+            if not success:
+                print("Not everything is connected!", v)
+    print("Success!")
 
 # numba does not like
 def shrink_mat(G):

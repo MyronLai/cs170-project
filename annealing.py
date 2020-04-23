@@ -49,7 +49,7 @@ def mutate_fn(state, G, p_switch, p_prune):
             for v in range(G.shape[0]):
                 # Find all leaf state nodes which can be removed
                 # TODO WARNING: potentially very slow, n^2? n^3?
-                if len(np.nonzero(G[v])[0]) == 1:
+                if len(np.nonzero(state[v])[0]) == 1:
                     success = True
                     reached = set()
                     # Make sure all neighbors are reachable from other state nodes

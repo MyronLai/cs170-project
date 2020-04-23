@@ -86,7 +86,7 @@ def test_mutate():
 
 def test_anneal():
     G = gsmol
-    result, score = annealing.anneal(G, 120000, 0.3, 0.6, 0.0004, print_energy=True)
+    result, score = annealing.anneal(G, 120000, 1, 1, 0.0004, print_energy=True)
     print(score)
     print("C: ", utils.cost_fn(result))
     nx.draw(utils.mat_to_nx(G))
@@ -94,6 +94,8 @@ def test_anneal():
     plt.figure()
     nx.draw(utils.mat_to_nx(result))
     plt.savefig("/tmp/gres.png")
+    utils.write_output(result, G, "/tmp/res.txt")
+    utils.verify_in_out(G, "/tmp/res.txt")
 
 def test_cost():
     def floyd_warshall_brute_force(weights):
