@@ -15,6 +15,6 @@ for file in os.listdir(path):
         result, score = annealing.anneal(G, 120000, 0.2, 0.6, 0.0004, print_energy=False)
         print(f"- {score}")
         outfile = f"{path}/out/{file.split('.')[0]}.out"
-        utils.write_output(result, outfile)
+        utils.write_output(result, G, outfile)
         # TODO REMOVE, Just while fixing bugs
         os.remove(infile)

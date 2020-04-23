@@ -23,8 +23,9 @@ def read_input(file):
     return g
 
 # numba does not like
-def write_output(G, file):
-    """ Write adjacency matrix to input
+def write_output(G, G_orig, file):
+    """ Write adjacency matrix to output
+        If matrix is empty, find single vertex which is connected to others
         V1 V2 V3 ...
         U1 V1
         U2 V2
@@ -43,7 +44,14 @@ def write_output(G, file):
                 v = str(minu) + " " + str(minv) + "\n"
                 lines.append(v)
                 s.add((minu, minv))
-    lines[0] = " ".join([str(v) for v in present]) + "\n"
+    if len(present) == 0:
+        for v in range(G.shape[0]):
+            if np.sum(G[v] == 0) == 1:
+                lines[0] = v + "\n"
+                break
+        print("FAILED TO FIND VALID VERTEX!!!")
+    else:
+        lines[0] = " ".join([str(v) for v in present]) + "\n"
     with open(file, "w") as f:
         f.writelines(lines)
 

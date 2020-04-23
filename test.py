@@ -44,8 +44,8 @@ def test_comp():
 
 def test_output():
     s = annealing.initial_fn(gsmol)
-    utils.write_output(gsmol, "/tmp/smol.txt")
-    utils.write_output(s, "/tmp/smoltree.txt")
+    utils.write_output(gsmol, gsmol, "/tmp/smol.txt")
+    utils.write_output(s, s, "/tmp/smoltree.txt")
 
 def test_mutate():
     G = gsmol2
@@ -85,8 +85,8 @@ def test_mutate():
     print(s.shape[0])
 
 def test_anneal():
-    G = g3
-    result, score = annealing.anneal(G, 120000, 0.3, 0.5, 0.0004, print_energy=True)
+    G = gsmol
+    result, score = annealing.anneal(G, 120000, 0.3, 0.6, 0.0004, print_energy=True)
     print(score)
     print("C: ", utils.cost_fn(result))
     nx.draw(utils.mat_to_nx(G))
