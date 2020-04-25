@@ -6,10 +6,26 @@ import os, sys
 import json
 from heapdict import heapdict
 
+params = {
+    "small": [100000, 0.3, 0.6, 0.7],
+    "medium": [100000, 0.3, 0.6, 1],
+    "large": [600000, 0.3, 0.6, 0.6]
+}
+
 def runfile(infile, outfile, score_to_beat = 1e99):
     G = utils.read_input(infile)
     print("Processing", infile)
-    result, score = annealing.anneal(G, 120000, 0.2, 0.6, 0.0004, print_energy=False)
+    if "small" in infile:
+        param = params["small"]
+    elif "medium" in infile:
+        param = params["medium"]
+    elif "large" in infile:
+        param = parmas["large"]
+    else:
+        print("NOT A RECOGNIZED FILETYPE!!")
+        param = params["medium"]
+    iters, ps, pp, scale = param
+    result, score = annealing.anneal(G, iters, ps, pp, scale, print_energy=False)
     s = utils.cost_fn(result)
 
     print(f"- {s}")
