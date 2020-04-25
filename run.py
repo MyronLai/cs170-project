@@ -10,7 +10,8 @@ def runfile(infile, outfile, score_to_beat = 1e99):
     G = utils.read_input(infile)
     print("Processing", infile)
     result, score = annealing.anneal(G, 120000, 0.2, 0.6, 0.0004, print_energy=False)
-    s = score / ((G.shape[0] * (G.shape[0] - 1)) / 2)
+    n = utils.shrink_mat(result).shape[0]
+    s = score / ((n * (n - 1)) / 2)
     print(f"- {s}")
     if s < score_to_beat:
         utils.write_output(result, G, outfile)
