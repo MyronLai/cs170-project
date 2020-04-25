@@ -51,6 +51,7 @@ if __name__ == "__main__":
             if saved_scores[key] < our_scores[key]:
                 our_scores[key] = saved_scores[key]
     except IOError:
+        print("Failed reading from saved scores!")
         for file in os.listdir(path):
             if "." in file and file.split(".")[1] == "in":
                 name = file.split('.')[0]
