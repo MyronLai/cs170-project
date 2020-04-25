@@ -135,9 +135,22 @@ def mutate_fn(state, G, p_switch, p_prune):
     return new_state
 
 @njit
+def check_trivial(G):
+    mask = G > 0
+    summed = np.sum(mask, axis=0)
+    # summed[i] = number of nonzero entries in ith column
+    full = (summed >= G.shape[0] - 1)
+    # full[i] = ith column is all nonzero (identity connection can be zero)
+    val = np.sum(full, axis=0)
+    return val > 0
+
+@njit
 def anneal(G, iters, p_switch, p_prune, scale, print_energy=False):
+    if check_trivial(G):
+        return np.zeros(G.shape), 0
     s = initial_fn(G)
-    e = utils.cost_fn(s)
+    e_init = utils.cost_fn(s)
+    e = e_init
     smin, emin = s, e
     # Because some people put empty graphs to start with smh
     if e == 0:
@@ -146,7 +159,8 @@ def anneal(G, iters, p_switch, p_prune, scale, print_energy=False):
         temp = (k + 1) / iters
         s_new = mutate_fn(s, G, p_switch, p_prune)
         e_new = utils.cost_fn(s_new)
-        if e_new < e or random.random() < math.exp(-(e_new - e)*temp*scale):
+        # Normalize with e_init because different graphs have different weights
+        if e_new < e or random.random() < math.exp(-(e_new - e)*temp*scale/e_init):
             s = s_new
             e = e_new
             if print_energy:

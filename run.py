@@ -8,9 +8,9 @@ import traceback
 from heapdict import heapdict
 
 params = {
-    "small": [100000, 0.3, 0.6, 0.7],
-    "medium": [100000, 0.3, 0.6, 1],
-    "large": [600000, 0.3, 0.6, 0.6]
+    "small": [100000, 0.3, 0.6, 500],
+    "medium": [100000, 0.3, 0.6, 500],
+    "large": [300000, 0.3, 0.6, 1400]
 }
 
 def runfile(infile, outfile, score_to_beat = 1e99):
