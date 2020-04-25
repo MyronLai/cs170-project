@@ -10,10 +10,7 @@ def runfile(infile, outfile, score_to_beat = 1e99):
     G = utils.read_input(infile)
     print("Processing", infile)
     result, score = annealing.anneal(G, 120000, 0.2, 0.6, 0.0004, print_energy=False)
-    try:
-        s = utils.cost_fast(utils.mat_to_nx(utils.shrink_mat(result)))
-    except ValueError:
-        s = 1e99
+    s = utils.cost_fn(result)
 
     print(f"- {s}")
     if s < score_to_beat:
