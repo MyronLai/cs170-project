@@ -4,6 +4,7 @@ import leaderboard
 import matplotlib.pyplot as plt
 import os, sys
 import json
+import traceback
 from heapdict import heapdict
 
 params = {
@@ -20,7 +21,7 @@ def runfile(infile, outfile, score_to_beat = 1e99):
     elif "medium" in infile:
         param = params["medium"]
     elif "large" in infile:
-        param = parmas["large"]
+        param = params["large"]
     else:
         print("NOT A RECOGNIZED FILETYPE!!")
         param = params["medium"]
@@ -78,10 +79,12 @@ if __name__ == "__main__":
                 with open(sys.argv[2], "w") as f:
                     f.write(json.dumps(dict(our_scores)))
             else:
-                print(f"- Couldn't improve score (old {to_beat} <= new {score})")
+                print(f"- Couldn't improve score (new {score} >= old {to_beat})")
                 priorities[name] += 0.01
 
-    except:
+    except Exception as e:
+        track = traceback.format_exc()
+        print(track)
         with open(sys.argv[2], "w") as f:
             f.write(json.dumps(dict(our_scores)))
         print(f"Saved scores to {sys.argv[2]}")
