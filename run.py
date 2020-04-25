@@ -62,6 +62,8 @@ if __name__ == "__main__":
                 print(f"- Improved score from {to_beat} to {score} (-{to_beat - score})")
                 our_scores[name] = score
                 priorities[name] = top_scores[name] - score
+                with open(sys.argv[2], "w") as f:
+                f.write(json.dumps(dict(our_scores)))
             else:
                 print(f"- Couldn't improve score (old {to_beat} <= new {score})")
                 priorities[name] *= 1.05 if priorities[name] > 0 else 0.95

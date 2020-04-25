@@ -166,10 +166,10 @@ def cost_fast(T):
     This is very similar to Q7 on MT1.
     h/t to Noah Kingdon for the algorithm.
     """
+    if len(T) <= 1: return 0
+
     if not nx.is_connected(T):
         raise ValueError("Tree must be connected")
-
-    if len(T) <= 1: return 0
 
     subtree_sizes = {}
     marked = defaultdict(bool)
