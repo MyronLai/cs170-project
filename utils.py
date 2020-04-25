@@ -134,7 +134,6 @@ def count_nodes(G, s, e, counts):
 
 @njit
 def cost_fn(G):
-    # TODO TEST!
     # Return 0 for empty graph
     if not np.any(G):
         return 0
