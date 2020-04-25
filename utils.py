@@ -142,11 +142,12 @@ def cost_fn(G):
     first = np.nonzero(G)[0][0]
     count_nodes(G, first, first, counts)
     cost = 0
+    num_nodes = np.count_nonzero(np.sum(G, axis=0))
     for u in range(G.shape[0]):
         for v in np.nonzero(G[u])[0]:
             min_count = min(counts[v], counts[u])
             # Don't multiply by 2 since each edge is counted twice anyways
-            cost += min_count * (np.count_nonzero(np.sum(G, axis=0)) - min_count) * G[u][v]
+            cost += min_count * (num_nodes - min_count) * G[u][v]
     return cost
 
 def cost_fast(T):

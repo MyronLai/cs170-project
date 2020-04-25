@@ -107,40 +107,29 @@ def mutate_fn(state, G, p_switch, p_prune):
     # Switch only edges around
     # Pick random vertex and disconnect it, reconnecting all components randomly
     v = np.random.choice(present_vals)
-    # Clears all edges on v
-    new_state[v] = np.zeros(G.shape[0])
-    new_state[:, v] = np.zeros(G.shape[0])
-    # Adds edges between all connected components
-    incorporated = set([v])
-    # Possible edges to other components
-    curr_edges = []
-    # Add edges to nodes which are included and have edges
-    for neighbor in np.nonzero(G[v] * present)[0]:
-        curr_edges.append((v, neighbor))
-    edges_to_add = []
-    while len(incorporated) < len(present_vals):
-        # Pick an edge randomly
-        if not curr_edges:
-            print("RAN OUT OF EDGES!! Probably shouldn't happen :/")
-            assert False
-        u, v = curr_edges[np.random.randint(len(curr_edges))]
-        curr_edges.remove((u, v))
-        # If the connected component isn't absorbed, use it
-        if v not in incorporated:
-            # Add the edge to the state
-            edges_to_add.append((u, v))
-            # Add all the elements in the component to the visited set
-            comp = utils.get_component(new_state, v)
-            incorporated = incorporated.union(comp)
-            # Add all the edges coming off the component into a non-visited set
-            for neighbor in comp:
-                for n2 in np.nonzero(G[neighbor])[0]:
-                    if n2 not in incorporated and not missing[n2]:
-                        curr_edges.append((neighbor, n2))
-    for u, v in edges_to_add:
-        new_state[u][v] = G[u][v]
-        new_state[v][u] = G[u][v]
-    #print("Checking swap")
+    remove_possible_edges = np.nonzero(new_state[v] * present)[0]
+    u = remove_possible_edges[np.random.randint(len(remove_possible_edges))]
+    # Clears chosen edge on v
+    new_state[v][u] = 0
+    new_state[u][v] = 0
+    comp = utils.get_component(new_state, v)
+    complist = list(comp)
+    success = False
+    while comp:
+        chosen = complist[np.random.randint(len(complist))]
+        complist.remove(chosen)
+        possible_edges = []
+        for n2 in np.nonzero(G[chosen])[0]:
+            if n2 not in comp and not missing[n2]:
+                possible_edges.append(n2)
+        if possible_edges:
+            chosen_n2 = possible_edges[np.random.randint(len(possible_edges))]
+            new_state[chosen][chosen_n2] = G[chosen][chosen_n2]
+            new_state[chosen_n2][chosen] = G[chosen][chosen_n2]
+            success = True
+            break
+    if not success:
+        print("FAILED TO FIND EDGE! This probably shouldn't happen :(")
     #utils.write_output(new_state, G, "/tmp/res.txt")
     #assert utils.verify_in_out(G, "/tmp/res.txt")
     return new_state
