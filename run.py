@@ -49,7 +49,7 @@ if __name__ == "__main__":
                     print(f"- Improved score from {our_scores[name]} to {score} (-{our_scores[name] - score})")
                     our_scores[name] = score
     
-    priorities = heapdict.heapdict({key: (top_scores[key] - our_scores[key]) for key in our_scores})
+    priorities = heapdict.heapdict({key: top_scores[key] - (our_scores[key] / top_scores[key]) for key in our_scores})
 
     print("Running in order of priority")
     try:
@@ -61,7 +61,7 @@ if __name__ == "__main__":
             if score < to_beat:
                 print(f"- Improved score from {to_beat} to {score} (-{to_beat - score})")
                 our_scores[name] = score
-                priorities[name] = top_scores[name] - score
+                priorities[name] = top_scores[name] - (score / top_scores[name])
                 with open(sys.argv[2], "w") as f:
                 f.write(json.dumps(dict(our_scores)))
             else:
