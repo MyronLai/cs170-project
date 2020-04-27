@@ -5,9 +5,9 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
 
-g = utils.read_input("inputs/25.in")
-g2 = utils.read_input("inputs/50.in")
-g3 = utils.read_input("inputs/100.in")
+g = utils.read_input("generated_inputs/25.in")
+g2 = utils.read_input("generated_inputs/50.in")
+g3 = utils.read_input("generated_inputs/100.in")
 gsmol = np.ones((5, 5)) - np.eye(5)
 gsmol2 = np.ones((10, 10)) - np.eye(10)
 gcomp = np.ones((25, 25)) - np.eye(25)
@@ -15,10 +15,15 @@ gcomp2 = np.ones((50, 50)) - np.eye(50)
 gcomp3 = np.ones((100, 100)) - np.eye(100)
 
 def test_initial():
-    G = g
+    G = utils.read_input("inputs/large-14.in")
     print("Running")
+    plt.figure()
+    nx.draw(utils.mat_to_nx(G))
+    plt.savefig("/tmp/G.png")
     state = annealing.initial_fn(G)
-    print("Done")
+    cost = utils.cost_fn(state)
+    print("Done with cost ", cost)
+    plt.figure()
     nx.draw(utils.mat_to_nx(state))
     plt.savefig("/tmp/tree.png")
     utils.write_output(state, G, "/tmp/res.txt")
