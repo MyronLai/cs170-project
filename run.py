@@ -39,8 +39,10 @@ def runfile(infile, outfile, score_to_beat = 1e99):
     return score
 
 def calc_priority(score, inpt, top_scores, ranks):
+    if score == 0:
+        return 1e99
     if PRIORITY_TYPE == "score_ratio":
-        return 1e99 if score == 0 else (top_scores[inpt] / score)
+        return top_scores[inpt] / score
     elif PRIORITY_TYPE == "rank":
         return -ranks[inpt]
     else:

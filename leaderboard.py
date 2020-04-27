@@ -40,7 +40,7 @@ def calculate_rank(inpt, by_input):
     for team, score in teams:
         count += 1
         if score != prev_score:
-            rank += 1
+            rank = count
             prev_score = score
         if team == OUR_TEAM_NAME:
             return rank
