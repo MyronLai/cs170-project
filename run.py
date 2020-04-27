@@ -13,6 +13,8 @@ params = {
     "large": [300000, 0.3, 0.6, 1400]
 }
 
+PRIORITY_TYPE = "rank" # "score_ratio"
+
 def runfile(infile, outfile, score_to_beat = 1e99):
     G = utils.read_input(infile)
     print("Processing", infile)
@@ -27,16 +29,22 @@ def runfile(infile, outfile, score_to_beat = 1e99):
         param = params["medium"]
     iters, ps, pp, scale = param
     result, score = annealing.anneal(G, iters, ps, pp, scale, print_energy=False)
-    s = utils.cost_fn(result)
 
-    print(f"- {s}")
-    if s < score_to_beat:
+    print(f"- {score}")
+    if score < score_to_beat:
         utils.write_output(result, G, outfile)
     # assert utils.verify_in_out(G, outfile)
     # TODO REMOVE, Just while fixing bugs
     # os.remove(infile)
-    return s
+    return score
 
+def calc_priority(score, inpt, top_scores, ranks):
+    if PRIORITY_TYPE == "score_ratio":
+        return 1e99 if score == 0 else (top_scores[inpt] / score)
+    elif PRIORITY_TYPE == "rank":
+        return max(ranks.values()) - ranks[inpt]
+    else:
+        return 1e99
 
 if __name__ == "__main__":
     path = sys.argv[1]
@@ -44,7 +52,7 @@ if __name__ == "__main__":
         os.mkdir(f"{path}/out")
     print("Running on dir", path)
 
-    top_scores, our_scores, by_input, by_team = leaderboard.parse_leaderboard()    
+    top_scores, our_scores, ranks, by_input = leaderboard.parse_leaderboard()    
     try:
         with open(sys.argv[2], "r") as f:
             saved_scores = json.loads(f.read())
@@ -64,7 +72,7 @@ if __name__ == "__main__":
                     print(f"- Improved score from {our_scores[name]} to {score} (-{our_scores[name] - score})")
                     our_scores[name] = score
     
-    priorities = heapdict.heapdict({key: 1e99 if our_scores[key] == 0 else (top_scores[key] / our_scores[key]) for key in our_scores})
+    priorities = heapdict.heapdict({key: calc_priority(our_scores[key], key, top_scores, ranks) for key in our_scores})
 
     print("Running in order of priority")
     try:
@@ -74,14 +82,19 @@ if __name__ == "__main__":
             print(f"Running {name} with priority {p} (our score {to_beat}, top score {top_scores[name]})")
             score = runfile(f"{path}/{name}.in", f"{path}/out/{name}.out", score_to_beat=to_beat)
             if score < to_beat:
-                print(f"- Improved score from {to_beat} to {score} (-{to_beat - score})")
+                print(f"+ Improved score from {to_beat} to {score} (-{to_beat - score})")
                 our_scores[name] = score
-                priorities[name] = 1e99 if score == 0 else (top_scores[name] / score)
+                priorities[name] = calc_priority(score, name, top_scores, ranks)
+                by_input[name][leaderboard.OUR_TEAM_NAME] = score
+                ranks[name] = leaderboard.calculate_rank(name, by_input)
                 with open(sys.argv[2], "w") as f:
                     f.write(json.dumps(dict(our_scores)))
             else:
                 print(f"- Couldn't improve score (new {score} >= old {to_beat})")
-                priorities[name] += 0.01
+                if PRIORITY_TYPE == "rank":
+                    priorities[name] += 1
+                elif PRIORITY_TYPE == "score_ratio":
+                    priorities[name] += 0.01
 
     except Exception as e:
         track = traceback.format_exc()
