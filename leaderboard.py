@@ -1,5 +1,6 @@
 import json
 import sys
+import math
 
 OUR_TEAM_NAME = 'jaarn'
 
@@ -39,7 +40,7 @@ def calculate_rank(inpt, by_input):
     teams = sorted(by_input[inpt].items(), key=lambda kvp: kvp[1])
     for team, score in teams:
         count += 1
-        if score != prev_score:
+        if not math.isclose(score, prev_score):
             rank = count
             prev_score = score
         if team == OUR_TEAM_NAME:
