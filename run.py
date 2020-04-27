@@ -13,7 +13,7 @@ params = {
     "large": [300000, 0.3, 0.6, 1400]
 }
 
-PRIORITY_TYPE = "rank" # "score_ratio"
+PRIORITY_TYPE = "score_ratio" # "rank" OR "score_ratio"
 
 def runfile(infile, outfile, score_to_beat = 1e99):
     G = utils.read_input(infile)
