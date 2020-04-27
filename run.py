@@ -42,7 +42,7 @@ def calc_priority(score, inpt, top_scores, ranks):
     if PRIORITY_TYPE == "score_ratio":
         return 1e99 if score == 0 else (top_scores[inpt] / score)
     elif PRIORITY_TYPE == "rank":
-        return max(ranks.values()) - ranks[inpt]
+        return -ranks[inpt]
     else:
         return 1e99
 
@@ -79,7 +79,7 @@ if __name__ == "__main__":
         while True:
             name, p = priorities.peekitem()
             to_beat = our_scores[name]
-            print(f"Running {name} with priority {p} (our score {to_beat}, top score {top_scores[name]})")
+            print(f"Running {name} with priority {p} (our score {to_beat}, top score {top_scores[name]}, our rank {ranks[name]})")
             score = runfile(f"{path}/{name}.in", f"{path}/out/{name}.out", score_to_beat=to_beat)
             if score < to_beat:
                 print(f"+ Improved score from {to_beat} to {score} (-{to_beat - score})")
@@ -92,7 +92,7 @@ if __name__ == "__main__":
             else:
                 print(f"- Couldn't improve score (new {score} >= old {to_beat})")
                 if PRIORITY_TYPE == "rank":
-                    priorities[name] += 1
+                    priorities[name] += 0.1
                 elif PRIORITY_TYPE == "score_ratio":
                     priorities[name] += 0.01
 
