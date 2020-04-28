@@ -30,26 +30,26 @@ def parse_leaderboard():
     
     our_scores = by_team[OUR_TEAM_NAME]
     
-    return top_scores, our_scores, calculate_ranks(by_input), by_input
+    return top_scores, our_scores, calculate_ranks(our_scores, by_input), by_input
 
 
-def calculate_rank(inpt, by_input):
+def calculate_rank(target_score, inpt, by_input):
     rank = 0
     count = 0
     prev_score = 1e99
-    teams = sorted(by_input[inpt].items(), key=lambda kvp: kvp[1])
-    for team, score in teams:
+    scores = sorted(by_input[inpt].values())
+    for score in scores:
+        if target_score < score:
+            return rank
         count += 1
         if not math.isclose(score, prev_score):
             rank = count
             prev_score = score
-        if team == OUR_TEAM_NAME:
-            return rank
         
     return 1e99
 
-def calculate_ranks(by_input):
-    return {k: calculate_rank(k, by_input) for k in by_input}
+def calculate_ranks(our_scores, by_input):
+    return {k: calculate_rank(our_scores[k], k, by_input) for k in by_input}
 
 
 if __name__ == "__main__":
