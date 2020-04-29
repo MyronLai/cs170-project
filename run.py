@@ -13,7 +13,7 @@ params = {
     "large": [300000, 0.3, 0.6, 1400]
 }
 
-PRIORITY_TYPE = "rank" # "score_ratio"
+PRIORITY_TYPE = "rank" # "rank" OR "score_ratio"
 
 def runfile(infile, outfile, score_to_beat = 1e99):
     G = utils.read_input(infile)
@@ -61,6 +61,7 @@ if __name__ == "__main__":
         for key in saved_scores:
             if saved_scores[key] < our_scores[key]:
                 our_scores[key] = saved_scores[key]
+        ranks = leaderboard.calculate_ranks(our_scores, by_input)
     except IOError:
         print("Failed reading from saved scores!")
         for file in os.listdir(path):
@@ -86,9 +87,8 @@ if __name__ == "__main__":
             if score < to_beat:
                 print(f"+ Improved score from {to_beat} to {score} (-{to_beat - score})")
                 our_scores[name] = score
+                ranks[name] = leaderboard.calculate_rank(score, name, by_input)
                 priorities[name] = calc_priority(score, name, top_scores, ranks)
-                by_input[name][leaderboard.OUR_TEAM_NAME] = score
-                ranks[name] = leaderboard.calculate_rank(name, by_input)
                 with open(sys.argv[2], "w") as f:
                     f.write(json.dumps(dict(our_scores)))
             else:

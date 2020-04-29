@@ -7,46 +7,27 @@ import numpy as np
 
 @njit
 def initial_fn(G):
-    # Generate "minimum" spanning dominating tree
+    # Generate random spanning tree
+    # Choose random root node, expand tree out randomly
     state = np.zeros(G.shape)
-    min_modified = np.where(G == 0, 1000, G)
-    pos = np.argwhere(min_modified == np.min(min_modified))[0]
-    u = pos[0]
-    v = pos[1]
+    marked = np.zeros(G.shape[0])
+    visited = 1
+    curr = np.random.randint(G.shape[0])
+    marked[curr] = 1
     # Numba doesn't like random.sample so we use list
     edges = []
-    included = set([u, v])
-    for neighbor in np.nonzero(G[u])[0]:
-        if neighbor != v:
-            edges.append((u, neighbor, G[u][neighbor]))
-            included.add(neighbor)
-    for neighbor in np.nonzero(G[v])[0]:
-        if neighbor != u:
-            edges.append((v, neighbor, G[v][neighbor]))
-            included.add(neighbor)
-    marked = np.zeros(G.shape[0])
-    marked[u] = 1
-    marked[v] = 1
-    state[u][v] = G[u][v]
-    state[v][u] = G[u][v]
-    # Yeah it's slow but it's only run once so it's fine
-    # Priority queues are hard
-    while len(included) < G.shape[0]:
-        curr_min = edges[0]
-        w = edges[0][2]
-        for e in edges:
-            if e[2] < w:
-                w = e[2]
-                curr_min = e
-        u, v, w = curr_min
-        edges.remove((u, v, w))
+    for neighbor in np.nonzero(G[curr])[0]:
+        edges.append((curr, neighbor))
+    while visited < G.shape[0]:
+        u, v = edges[np.random.randint(len(edges))]
+        edges.remove((u, v))
         if not marked[v]:
             marked[v] = True
             state[v][u] = G[u][v]
             state[u][v] = G[u][v]
             for neighbor in np.nonzero(G[v])[0]:
-                edges.append((v, neighbor, G[v][neighbor]))
-                included.add(neighbor)
+                edges.append((v, neighbor))
+            visited += 1
     return state
 
 # Can't be nested because numba
