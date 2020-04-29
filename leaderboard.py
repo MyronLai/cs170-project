@@ -46,7 +46,7 @@ def calculate_rank(target_score, inpt, by_input):
             rank = count
             prev_score = score
         
-    return 1e99
+    return 1 if target_score == 0 else 1e99
 
 def calculate_ranks(our_scores, by_input):
     return {k: calculate_rank(our_scores[k], k, by_input) for k in by_input}
