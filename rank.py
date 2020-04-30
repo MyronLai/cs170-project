@@ -6,22 +6,30 @@ if __name__ == "__main__":
     with open(sys.argv[1], "r") as f:
         our_scores = json.loads(f.read())
 
-    top_scores, _, _, by_input = leaderboard.parse_leaderboard()
+    top_scores, submitted_scores, _, by_input = leaderboard.parse_leaderboard()
 
     ranks = leaderboard.calculate_ranks(our_scores, by_input)
+    submitted_ranks = leaderboard.calculate_ranks(submitted_scores, by_input)
 
     real_ranks = [max(x, 1) for x in ranks.values()]
     real_rank = sum(real_ranks) / len(real_ranks)
 
-    print("Overall Average Rank:", real_rank)
+    submitted_rank = sum(submitted_ranks.values()) / len(submitted_ranks.values())
+
+    print(f"Overall Average Rank: {real_rank}")
+    print(f"Submitted Average Rank: {submitted_rank} (diff {real_rank - submitted_rank})")
 
     all_scores = our_scores.values()
     small_scores = [s[1] for s in our_scores.items() if "small" in s[0]]
     medium_scores = [s[1] for s in our_scores.items() if "medium" in s[0]]
     large_scores = [s[1] for s in our_scores.items() if "large" in s[0]]
 
+    avg = sum(all_scores)/len(all_scores)
+    submitted_avg = sum(submitted_scores.values())/len(submitted_scores.values())
+
     print()
-    print("Overall average score:", sum(all_scores)/len(all_scores))
+    print("Overall average score:", avg)
+    print(f"Submitted average score: {submitted_avg} (diff {avg - submitted_avg})")
     print("Small average score:", sum(small_scores)/len(small_scores))
     print("Medium average score:", sum(medium_scores)/len(medium_scores))
     print("Large average score:", sum(large_scores)/len(large_scores))
