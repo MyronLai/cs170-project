@@ -17,7 +17,7 @@ PRIORITY_TYPE = "rank" # "rank" OR "score_ratio"
 
 def runfile(infile, outfile, score_to_beat = 1e99):
     G = utils.read_input(infile)
-    print("Processing", infile)
+    # print("Processing", infile)
     if "small" in infile:
         param = params["small"]
     elif "medium" in infile:
@@ -30,7 +30,7 @@ def runfile(infile, outfile, score_to_beat = 1e99):
     iters, ps, pp, scale = param
     result, score = annealing.anneal(G, iters, ps, pp, scale, print_energy=False)
 
-    print(f"- {score}")
+    # print(f"- {score}")
     if score < score_to_beat:
         utils.write_output(result, G, outfile)
     # assert utils.verify_in_out(G, outfile)
@@ -92,7 +92,7 @@ if __name__ == "__main__":
                 with open(sys.argv[2], "w") as f:
                     f.write(json.dumps(dict(our_scores)))
             else:
-                print(f"- Couldn't improve score (new {score} >= old {to_beat})")
+                # print(f"- Couldn't improve score (new {score} >= old {to_beat})")
                 if PRIORITY_TYPE == "rank":
                     priorities[name] += 0.1
                 elif PRIORITY_TYPE == "score_ratio":

@@ -15,6 +15,17 @@ if __name__ == "__main__":
 
     print("Overall Average Rank:", real_rank)
 
+    all_scores = our_scores.values()
+    small_scores = [s[1] for s in our_scores.items() if "small" in s[0]]
+    medium_scores = [s[1] for s in our_scores.items() if "medium" in s[0]]
+    large_scores = [s[1] for s in our_scores.items() if "large" in s[0]]
+
+    print()
+    print("Overall average score:", sum(all_scores)/len(all_scores))
+    print("Small average score:", sum(small_scores)/len(small_scores))
+    print("Medium average score:", sum(medium_scores)/len(medium_scores))
+    print("Large average score:", sum(large_scores)/len(large_scores))
+
     rank_amounts = {}
     for rank in ranks.values():
         if rank not in rank_amounts:
