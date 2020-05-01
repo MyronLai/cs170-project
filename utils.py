@@ -1,4 +1,4 @@
-import math
+import math, os
 import networkx as nx
 import numpy as np
 from numba import njit
@@ -90,6 +90,16 @@ def verify_in_out(G, outfile):
                 return False
     print("Successfully verified!")
     return True
+
+def test_all(indir, outdir):
+    for file in os.listdir(indir):
+        path = indir + "/" + file
+        if os.path.isdir(path):
+            continue
+        outfile = outdir + "/" + file.replace(".in", ".out")
+        G = read_input(path)
+        print("Testing ", file)
+        assert verify_in_out(G, outfile)
 
 # numba does not like
 def shrink_mat(G):
