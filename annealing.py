@@ -6,7 +6,51 @@ from numba.typed import Dict
 import numpy as np
 
 @njit
-def initial_fn(G):
+def initial_dom_fn(G):
+    # Generate "minimum" spanning dominating tree
+    state = np.zeros(G.shape)
+    min_modified = np.where(G == 0, 1000, G)
+    pos = np.argwhere(min_modified == np.min(min_modified))[0]
+    u = pos[0]
+    v = pos[1]
+    # Numba doesn't like random.sample so we use list
+    edges = []
+    included = set([u, v])
+    for neighbor in np.nonzero(G[u])[0]:
+        if neighbor != v:
+            edges.append((u, neighbor, G[u][neighbor]))
+            included.add(neighbor)
+    for neighbor in np.nonzero(G[v])[0]:
+        if neighbor != u:
+            edges.append((v, neighbor, G[v][neighbor]))
+            included.add(neighbor)
+    marked = np.zeros(G.shape[0])
+    marked[u] = 1
+    marked[v] = 1
+    state[u][v] = G[u][v]
+    state[v][u] = G[u][v]
+    # Yeah it's slow but it's only run once so it's fine
+    # Priority queues are hard
+    while len(included) < G.shape[0]:
+        curr_min = edges[0]
+        w = edges[0][2]
+        for e in edges:
+            if e[2] < w:
+                w = e[2]
+                curr_min = e
+        u, v, w = curr_min
+        edges.remove((u, v, w))
+        if not marked[v]:
+            marked[v] = True
+            state[v][u] = G[u][v]
+            state[u][v] = G[u][v]
+            for neighbor in np.nonzero(G[v])[0]:
+                edges.append((v, neighbor, G[v][neighbor]))
+                included.add(neighbor)
+    return state
+
+@njit
+def initial_span_fn(G):
     # Generate random spanning tree
     # Choose random root node, expand tree out randomly
     state = np.zeros(G.shape)
@@ -29,6 +73,10 @@ def initial_fn(G):
                 edges.append((v, neighbor))
             visited += 1
     return state
+
+@njit
+def initial_fn(G):
+    return initial_dom_fn(G)
 
 # Can't be nested because numba
 @njit
