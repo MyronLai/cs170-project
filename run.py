@@ -9,8 +9,8 @@ from heapdict import heapdict
 
 params = {
     "small": [10000000, 0.3, 0.6, 500],
-    "medium": [2000000, 0.3, 0.6, 500],
-    "large": [6000000, 0.3, 0.6, 1400]
+    "medium": [2000000, 0.3, 0.6, 210],
+    "large": [6000000, 0.3, 0.6, 90]
 }
 
 PRIORITY_TYPE = "rank" # "rank" OR "score_ratio"
