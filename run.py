@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import os, sys
 import json
 import traceback
-from heapdict import heapdict
+import heapdict
 
 params = {
     "small": [10000000, 0.3, 0.6, 500],
@@ -94,7 +94,7 @@ if __name__ == "__main__":
             else:
                 # print(f"- Couldn't improve score (new {score} >= old {to_beat})")
                 if PRIORITY_TYPE == "rank":
-                    priorities[name] += 0.03
+                    priorities[name] += 0.25
                 elif PRIORITY_TYPE == "score_ratio":
                     priorities[name] += 0.01
 
