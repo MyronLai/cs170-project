@@ -1,4 +1,4 @@
-from heapdict import heapdict
+import heapdict
 import math
 
 ## Doesn't work for some reason, seems annoying to fix
