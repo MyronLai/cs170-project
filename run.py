@@ -74,6 +74,7 @@ if __name__ == "__main__":
                 if score < our_scores[name]:
                     print(f"- Improved score from {our_scores[name]} to {score} (-{our_scores[name] - score})")
                     our_scores[name] = score
+        raise KeyboardInterrupt
     
     priorities = heapdict.heapdict({key: calc_priority(our_scores[key], key, top_scores, ranks) for key in our_scores})
 
