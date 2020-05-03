@@ -45,7 +45,7 @@ if __name__ == "__main__":
     for r, c in sorted(rank_amounts.items(), key=lambda x: x[0]):
         print(f"{r}: {c}")
     
-    N = 10
+    N = 10 if len(sys.argv) < 3 else int(sys.argv[2])
     print()
     print(f"{N} worst ranks")
     for f, r in sorted(ranks.items(), key=lambda x: -x[1])[:N]:
