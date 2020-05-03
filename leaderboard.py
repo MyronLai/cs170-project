@@ -39,7 +39,7 @@ def calculate_rank(target_score, inpt, by_input):
     prev_score = 1e99
     scores = sorted(by_input[inpt].values())
     for score in scores:
-        if target_score < score:
+        if not math.isclose(target_score, score) and target_score < score:
             return rank
         count += 1
         if not math.isclose(score, prev_score):
