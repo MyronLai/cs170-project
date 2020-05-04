@@ -8,9 +8,9 @@ import traceback
 import heapdict
 
 params = {
-    "small": [10000000, 0.3, 0.6, 500],
-    "medium": [2000000, 0.3, 0.6, 210],
-    "large": [6000000, 0.3, 0.6, 90]
+    "small": [100000, 0.3, 0.6, 500],
+    "medium": [100000, 0.3, 0.6, 500],
+    "large": [300000, 0.3, 0.6, 1400]
 }
 
 PRIORITY_TYPE = "rank" # "rank" OR "score_ratio"
