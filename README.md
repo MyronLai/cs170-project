@@ -16,10 +16,10 @@ We used simulated annealing in order to produce outputs. For each input, we gene
 The following python packages are required to run this program. All can be obtained from PyPi through `pip`:
 
 - `networkx`
-- `numba`
+- `numba` (to improve speed)
 - `numpy`
 - `matplotlib`
-- `heapdict`
+- `heapdict` (python has no built-in priority queue)
 
 ## Run Instructions
 
